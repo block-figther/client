@@ -11,13 +11,10 @@ export const drawPlayer = (app: Application, data: IPlayerData) => {
   const [x, y] = getPlayerPosition(app, data);
 
   const player = new Graphics()
-    .rect(
-      x,
-      y,
-      width * SCALE * 2,
-      height * SCALE * 2
-    )
+    .rect(x, y, width * SCALE * 2, height * SCALE * 2)
     .fill(0xffffff);
+  player.interactive = true;
+  
 
   app.stage.addChild(player);
 };

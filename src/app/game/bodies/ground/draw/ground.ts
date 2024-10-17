@@ -12,13 +12,9 @@ export const drawGround = (app: Application, data: GroundData) => {
 
   const newY = app.renderer.height - y + height * SCALE;
   const ground = new Graphics()
-    .rect(
-      (x - width) * SCALE,
-      newY,
-      width * SCALE * 2,
-      height * SCALE * 2
-    )
+    .rect((x - width) * SCALE, newY, width * SCALE * 2, height * SCALE * 2)
     .fill(0xffffff);
+  ground.interactive = true;
 
   app.stage.addChild(ground);
 };

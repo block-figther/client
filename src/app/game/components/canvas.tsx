@@ -1,4 +1,4 @@
-import { Application } from "pixi.js";
+import { Application, Renderer, Sprite, Texture } from "pixi.js";
 import { useEffect, useRef } from "react";
 import { GroundData } from "../bodies/interfaces/i.ground-data";
 import { IPlayerData as PlayerData } from "../bodies/interfaces/i.player-data";
@@ -35,6 +35,7 @@ export const CanvasComponent = ({ socket }: { socket: WebSocket }) => {
       }
     }
   };
+
   useEffect(() => {
     const app = new Application();
     document.addEventListener("keydown", handleKeyPress);
@@ -44,6 +45,10 @@ export const CanvasComponent = ({ socket }: { socket: WebSocket }) => {
     //   console.log(`Frames per second: ${counter}`);
     //   counter = 0;
     // }, 1000);
+
+    const handlePointerDown = (e: PointerEvent) => {
+      const point = app.stage.toLocal(e);
+    };
 
     if (pixiContainer.current) {
       app
@@ -55,10 +60,12 @@ export const CanvasComponent = ({ socket }: { socket: WebSocket }) => {
           console.log(`initialized`);
           pixiContainer.current?.appendChild(app.canvas);
           app.stage.interactive = true;
-          app.stage.eventMode = "static";
-          app.stage.on("pointerdown", (e) => {
-            console.log(`Click, X: ${e.globalX}, Y: ${e.globalY}`);
-          });
+
+          // Listen for click
+          app.renderer.canvas.addEventListener(
+            "pointerdown",
+            handlePointerDown
+          );
         });
     }
 
@@ -70,6 +77,7 @@ export const CanvasComponent = ({ socket }: { socket: WebSocket }) => {
       }
 
       app.stage.removeChildren();
+
       const data = JSON.parse(event.data);
       for (let i = 0; i < data.length; i++) {
         const bodyData: GroundData | PlayerData = data[i];
@@ -82,7 +90,6 @@ export const CanvasComponent = ({ socket }: { socket: WebSocket }) => {
           drawPlayer(app, bodyData);
           const [x, y] = getPlayerPosition(app, bodyData);
           app.stage.pivot.set(x, y);
-
           app.stage.position.set(
             app.renderer.width / 2,
             app.renderer.height / 2
@@ -93,6 +100,8 @@ export const CanvasComponent = ({ socket }: { socket: WebSocket }) => {
 
     return () => {
       // clearInterval(fpsCounter);
+      // Remove listener for click to prevent leak
+      app.renderer.canvas.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyPress);
     };
   }, [socket]);
