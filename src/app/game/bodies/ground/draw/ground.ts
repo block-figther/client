@@ -14,7 +14,7 @@ export const drawGround = (app: Application, data: GroundData) => {
   const ground = new Graphics()
     .rect(
       (x - width) * SCALE,
-      newY, // Adjust y-coordinate
+      newY,
       width * SCALE * 2,
       height * SCALE * 2
     )
