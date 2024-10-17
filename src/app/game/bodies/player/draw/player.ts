@@ -1,18 +1,19 @@
 import { Application, Graphics } from "pixi.js";
 import { IPlayerData } from "../../interfaces/i.player-data";
 import { SCALE } from "../../../const/scale";
+import { getPlayerPosition } from "../utils/getPlayerPosition";
 
 export const drawPlayer = (app: Application, data: IPlayerData) => {
   const {
-    x,
-    y,
     data: { width, height },
   } = data;
 
+  const [x, y] = getPlayerPosition(app, data);
+
   const player = new Graphics()
     .rect(
-      (x - width) * SCALE,
-      app.renderer.height - y * SCALE - 5 , // Adjust y-coordinate
+      x,
+      y,
       width * SCALE * 2,
       height * SCALE * 2
     )

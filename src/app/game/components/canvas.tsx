@@ -6,6 +6,8 @@ import { drawGround } from "../bodies/ground/draw/ground";
 import { box2dToPixi } from "../utils/toPixi";
 import { drawPlayer } from "../bodies/player/draw/player";
 import { Body } from "../bodies/enum/enum.bodies";
+import { SCALE } from "../const/scale";
+import { getPlayerPosition } from "../bodies/player/utils/getPlayerPosition";
 
 const KeyCodes: Record<string, string> = {
   w: "up",
@@ -78,26 +80,13 @@ export const CanvasComponent = ({ socket }: { socket: WebSocket }) => {
 
         if (bodyData.type === Body.player) {
           drawPlayer(app, bodyData);
-          app.stage.pivot.set(
-            bodyData.x + bodyData.data.width,
-            app.renderer.height - bodyData.y - bodyData.data.height
-          );
-          // TODO: Improve X, Y coords based on updated player's box X, Y coords
-          // TODO: Get current player and render only by player's position
+          const [x, y] = getPlayerPosition(app, bodyData);
+          app.stage.pivot.set(x, y);
+
           app.stage.position.set(
             app.renderer.width / 2,
             app.renderer.height / 2
           );
-          // app.stage.pivot.set(
-          //   bodyData.x * SCALE + bodyData.data.width * SCALE,
-          //   app.renderer.height -
-          //     bodyData.y * SCALE -
-          //     bodyData.data.height * SCALE
-          // );
-          // app.stage.position.set(
-          //   app.renderer.width / 2,
-          //   app.renderer.height / 2
-          // );
         }
       }
     };
